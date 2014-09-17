@@ -22,12 +22,30 @@ oddPspTOI a upb = [n | n <- [3,5..upb], expmod a (n-1) n == 1, not (isPrime n)]
 order :: Integer -> Integer -> Integer
 order a p = ord a (a `mod` p) 1 p
 	where ord a e k p = if e == 1 then k else ord a (a*e `mod` p) (k+1) p 
-
+				
 factor :: Integer -> [Integer]
-factor a 
-	| xs = []
-	| fac a 2
-	where fac a i = if i == a then xs ++ [a] else ( if a%i == 0 then a `div` i && xs ++ [i] else fac a (i+1))
+factor a = fac a 2 
+	where 
+	fac a i
+		| a == i			= [i]
+		| a `mod` i == 0	= [i] ++ (fac (a`div`i) i)
+		| otherwise			= fac a (i+1)
+			
 
-order2 :: Integer -> Integer -> Integer
-order2 a p =  
+order2 :: Integer -> Integer
+order2 p = head [e | e <- productset (factor (p-1)), expmod 2 e p == 1] 
+
+merge :: [Integer] -> [Integer] -> [Integer]
+merge [] ys = ys
+merge xs [] = xs
+merge (x:xs) (y:ys)
+  | x < y     = x : (merge xs (y:ys))
+  | x == y    = x : (merge xs ys)
+  | otherwise = y : (merge (x:xs) ys)
+  
+
+productset :: [Integer] -> [Integer]
+productset []     = [1]
+productset (x:xs) = merge ps [x*n | n <- ps] 
+  where ps = productset xs
+
