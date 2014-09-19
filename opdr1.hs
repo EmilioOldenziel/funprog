@@ -32,8 +32,8 @@ factor a = fac a 2
 		| otherwise			= fac a (i+1)
 			
 
-order2 :: Integer -> Integer
-order2 p = head [e | e <- productset (factor (p-1)), expmod 2 e p == 1] 
+order2 :: Integer -> Integer -> Integer
+order2 a p = head [e | e <- productset (factor (p-1)), expmod a e p == 1] 
 
 merge :: [Integer] -> [Integer] -> [Integer]
 merge [] ys = ys
@@ -49,3 +49,9 @@ productset []     = [1]
 productset (x:xs) = merge ps [x*n | n <- ps] 
   where ps = productset xs
 
+oddPspTOII :: Integer -> Integer -> [Integer]
+oddPspTOII a upb
+	|[n == order2 a p * p * k + 1 | k <- [1..ceiling(sqrt(upb))], p<- factor(p), n<-[1..upb]] = True
+	| otherwise = False
+
+--main = length ( oddPspTO 2 2^16 )
