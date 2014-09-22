@@ -49,9 +49,7 @@ productset []     = [1]
 productset (x:xs) = merge ps [x*n | n <- ps] 
   where ps = productset xs
 
-oddPspTOII :: Integer -> Integer -> [Integer]
-oddPspTOII a upb
-	|[n == order2 a p * p * k + 1 | k <- [1..ceiling(sqrt(upb))], p<- factor(p), n<-[1..upb]] = True
-	| otherwise = False
+oddPspTOII :: Integer -> Integer -> Integer -> [Integer]
+oddPspTOII a upb n = [k | p <- factor(n), k <- [1..(upb)], (n == ((order2 a p) * p * k) + 1) ]
 
 --main = length ( oddPspTO 2 2^16 )
