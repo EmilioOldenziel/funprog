@@ -49,7 +49,18 @@ productset []     = [1]
 productset (x:xs) = merge ps [x*n | n <- ps] 
   where ps = productset xs
 
-oddPspTOII :: Integer -> Integer -> Integer -> [Integer]
-oddPspTOII a upb n = [k | p <- factor(n), k <- [1..(upb)], (n == ((order2 a p) * p * k) + 1) ]
+--oddPspTOII :: Integer -> [Integer]
+--oddPspTOII upb = [n| n<- [3, 5 .. ceiling(sqrt(fromIntegral(upb)))], pspTest n]
+
+--test :: Integer -> Integer -> [Integer]
+--test a upb = [((order2(a p) * k * p) + p)| p <- primes, k<- [1..]]
+
+pspTest :: Integer -> Integer -> [Integer]
+pspTest	a upb = [((order2 a p) * p * k) + p | k <- [1.. upb], p <- primes, (((order2 a p) * p * k) + p) < upb ]
+
+primes :: [Integer]
+primes = sieve [ 3, 5..]
+  where
+  sieve (p:x) = p : sieve [ n | n <- x, n `mod` p > 0 ] 
 
 --main = length ( oddPspTO 2 2^16 )
