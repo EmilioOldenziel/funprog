@@ -1,3 +1,5 @@
+import Data.List
+
 isPrime :: Integer -> Bool
 isPrime n
 	| a == 0 = True
@@ -49,14 +51,18 @@ productset []     = [1]
 productset (x:xs) = merge ps [x*n | n <- ps] 
   where ps = productset xs
 
---oddPspTOII :: Integer -> Integer -> [Integer]
---oddPspTOII a upb = [n | n <- candi a upb, a^(n-1) `mod` n == 1, not (isPrime n)]
+oddPspTOII :: Integer -> Integer -> [Integer]
+oddPspTOII a upb = [n | n <- candi a upb,  expmod a (n-1) n == 1, not (isPrime n)]
 
 candi :: Integer -> Integer -> [Integer]
-candi a upb = [merge(x:xs)|xs <- candiList a upb]
+candi a upb = merge2 (candiList a upb)
+
+merge2 :: [[Integer]] -> [Integer]
+merge2 [] = []
+merge2(x:xs) = merge x (merge2 xs)
 
 candiList :: Integer -> Integer -> [[Integer]]
-candiList a upb =  merge[candiP a p upb|p <- takeWhile(<upb)primes]
+candiList a upb =  [candiP a p upb|p <- takeWhile(<=upb)primes]
 
 candiP :: Integer -> Integer -> Integer -> [Integer]
 candiP a p upb = [(((order2 a p) * p) + p),(((order2 a p) * p * 2) + p) .. upb]
@@ -66,4 +72,12 @@ primes = sieve [ 3, 5..]
   where
   sieve (p:x) = p : sieve [ n | n <- x, n `mod` p > 0 ] 
 
---main = length ( oddPspTO 2 2^16 )
+prime2 :: Integer -> Integer -> Bool
+prime2 a x
+	| b == 1 = True
+	| otherwise = False
+	where b = sum ([(toInteger (fromEnum(n == x))) | n <- ([3,5..x] \\ (oddPspTOII a x)), expmod a (n-1) n == 1])
+	
+-- Does not include 2 in the length due to making a list of odd numbers *[3,5 .. upb]*
+cntPrime2 :: Integer -> Integer -> Int
+cntPrime2 a upb = length ([n | n <- ([3,5..upb] \\ (oddPspTOII a upb)), expmod a (n-1) n == 1])
