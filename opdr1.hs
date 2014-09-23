@@ -49,14 +49,23 @@ productset []     = [1]
 productset (x:xs) = merge ps [x*n | n <- ps] 
   where ps = productset xs
 
---oddPspTOII :: Integer -> [Integer]
---oddPspTOII upb = [n| n<- [3, 5 .. ceiling(sqrt(fromIntegral(upb)))], pspTest n]
+--oddPspTOII :: Integer -> Integer -> [Integer]
+--oddPspTOII a upb = [n | n <- pspTest a upb, a^(n-1) `mod` n == 1, not (isPrime n)]
 
---test :: Integer -> Integer -> [Integer]
---test a upb = [((order2(a p) * k * p) + p)| p <- primes, k<- [1..]]
+--pspTest :: Integer -> Integer -> [Integer]
+--pspTest	a upb = [((order2 a p) * p * k) + p | p <- takeWhile(<upb)primes, k <- [1.. ceiling(sqrt(fromIntegral(upb)))]]
 
-pspTest :: Integer -> Integer -> [Integer]
-pspTest	a upb = [((order2 a p) * p * k) + p | k <- [1.. upb], p <- primes, (((order2 a p) * p * k) + p) < upb ]
+--oddPspTOII :: Integer -> Integer -> [Integer]
+--oddPspTOII a upb = [merge(x:xs)|xs <- candiList a upb]
+
+candiList :: Integer -> Integer -> [[Integer]]
+candiList a upb =  merge[candiP a p upb|p <- takeWhile(<upb)primes]
+
+candiP :: Integer -> Integer -> Integer -> [Integer]
+candiP a p upb = [(((order2 a p) * p) + p),(((order2 a p) * p * 2) + p) .. upb]
+
+--tW :: Integer -> [Integer]
+--tW upb  = [p|p<- takeWhile(<upb)primes]
 
 primes :: [Integer]
 primes = sieve [ 3, 5..]
