@@ -1,5 +1,8 @@
 import Data.List
 
+isqrt :: Integer -> Integer
+isqrt = floor . sqrt . fromIntegral
+
 isPrime :: Integer -> Bool
 isPrime n
 	| a == 0 = True
@@ -15,8 +18,8 @@ oddPspTO a upb = [n | n <- [3,5..upb], a^(n-1) `mod` n == 1, not (isPrime n)]
 expmod :: Integer -> Integer -> Integer -> Integer
 expmod a e n 
 	| e == 1 = a `mod` n
-	| e `mod` 2 == 1 = (a * (expmod (a*a) (e`div`2) n)) `mod` n
-	| e `mod` 2 == 0 = (expmod (a*a) (e`div`2) n) `mod` n
+	| e `mod` 2 == 1 = (a * (expmod (a*a `mod` n) (e`div`2) n)) `mod` n
+	| e `mod` 2 == 0 = (expmod (a*a `mod` n) (e`div`2) n) `mod` n
 
 oddPspTOI :: Integer -> Integer -> [Integer]
 oddPspTOI a upb = [n | n <- [3,5..upb], expmod a (n-1) n == 1, not (isPrime n)]
@@ -62,10 +65,12 @@ merge2 [] = []
 merge2(x:xs) = merge x (merge2 xs)
 
 candiList :: Integer -> Integer -> [[Integer]]
-candiList a upb =  [candiP a p upb|p <- takeWhile(<=upb)primes]
+candiList a upb =  [candiP a p upb|p <- takeWhile(< isqrt(upb))primes]
 
 candiP :: Integer -> Integer -> Integer -> [Integer]
-candiP a p upb = [(((order2 a p) * p) + p),(((order2 a p) * p * 2) + p) .. upb]
+candiP a p upb
+	|odd (order2 a p) = [(((order2 a p) * p) + p),(((order2 a p) * p * 4) + p) .. upb]
+	|otherwise = [(((order2 a p) * p) + p),(((order2 a p) * p * 2) + p) .. upb]
 
 primes :: [Integer]
 primes = sieve [ 3, 5..]
