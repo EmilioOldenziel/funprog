@@ -50,22 +50,16 @@ productset (x:xs) = merge ps [x*n | n <- ps]
   where ps = productset xs
 
 --oddPspTOII :: Integer -> Integer -> [Integer]
---oddPspTOII a upb = [n | n <- pspTest a upb, a^(n-1) `mod` n == 1, not (isPrime n)]
+--oddPspTOII a upb = [n | n <- candi a upb, a^(n-1) `mod` n == 1, not (isPrime n)]
 
---pspTest :: Integer -> Integer -> [Integer]
---pspTest	a upb = [((order2 a p) * p * k) + p | p <- takeWhile(<upb)primes, k <- [1.. ceiling(sqrt(fromIntegral(upb)))]]
-
---oddPspTOII :: Integer -> Integer -> [Integer]
---oddPspTOII a upb = [merge(x:xs)|xs <- candiList a upb]
+candi :: Integer -> Integer -> [Integer]
+candi a upb = [merge(x:xs)|xs <- candiList a upb]
 
 candiList :: Integer -> Integer -> [[Integer]]
 candiList a upb =  merge[candiP a p upb|p <- takeWhile(<upb)primes]
 
 candiP :: Integer -> Integer -> Integer -> [Integer]
 candiP a p upb = [(((order2 a p) * p) + p),(((order2 a p) * p * 2) + p) .. upb]
-
---tW :: Integer -> [Integer]
---tW upb  = [p|p<- takeWhile(<upb)primes]
 
 primes :: [Integer]
 primes = sieve [ 3, 5..]
