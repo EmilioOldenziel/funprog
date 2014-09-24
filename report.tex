@@ -13,11 +13,9 @@
        assignment Functional Programming
 }
 \date{\today}
-\author{Emilio Oldenziel (s......)\\  Lotte Noteboom (s1959492)}
+\author{Emilio Oldenziel (s2509679)\\  Lotte Noteboom (s1959492)}
 
 \maketitle
-
-\section{Problem description}
 
 \section{Proof}
 In this section we will proof that $a^{q-1} \: mod \: p = 1 $ with $n=p*q$ is true for each $q$ for which
@@ -35,8 +33,22 @@ This will lead to the evaluation below.
 Because the evaluation ends in a false conclusion, the first statement is true, no matter what we fill in for $r$ this
 this expression will never be true, thus $a^{q-1} \: mod \: p = 1 $ is true for each $q$ where $q$ is a multiple of
 $ord_{a}(p)$.
+
+\section{Excersises}
+\begin{tabular}{c|c}
+1a & isPrime\\
+1b & cntPrime\\
+1c & oddPspTO\\
+1d & expmod\\
+1e & oddPspTOI\\
+\\
+2a & order2\\
+2b & oddPspTOII\\
+2c & isPrime2\\
+2d & cntPrime2\\
+\end{tabular}
 \newpage
-\section{Appendix: program text}
-%\lstinputlisting{opdr1.hs}
+\section{Program text}
+\lstinputlisting{opdr1.hs}
 
 \end{document}
