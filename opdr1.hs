@@ -4,7 +4,7 @@ import Data.List
 isqrt :: Integer -> Integer
 isqrt = floor . sqrt . fromIntegral
 
--- Checks if a given number is a pseudoprime.
+-- Checks if a given number is a prime.
 isPrime :: Integer -> Bool
 isPrime n
 	| a == 0 = True
@@ -81,7 +81,7 @@ candiList a upb =  [candiP a p upb|p <- takeWhile(< isqrt(upb))primes]
 -- makes a list of the candidates for a give prime.
 candiP :: Integer -> Integer -> Integer -> [Integer]
 candiP a p upb
-	|odd (order2 a p) = [(((order2 a p) * p) + p),(((order2 a p) * p * 4) + p) .. upb]
+	|odd (order2 a p) = [(((order2 a p) * p * 2) + p),(((order2 a p) * p * 4) + p) .. upb]
 	|otherwise = [(((order2 a p) * p) + p),(((order2 a p) * p * 2) + p) .. upb]
 
 -- Sieve of Eratosthenes, is a infinite list.
