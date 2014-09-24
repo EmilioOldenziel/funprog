@@ -60,6 +60,7 @@ productset (x:xs) = merge ps [x*n | n <- ps]
   
 -- Exercise 2
 --------------------------------------------------
+-- a is the base of the order (mostly this is 2)
 
 -- Checks the list of canidates if they are a pseudoprime.
 oddPspTOII :: Integer -> Integer -> [Integer]
