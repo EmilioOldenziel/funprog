@@ -3,7 +3,8 @@
 \usepackage{a4wide,times}
 \usepackage[english]{babel}
 \usepackage{listings}
-
+%\usepackage{mathtools}
+\usepackage{amsmath}
 \lstset{language=Haskell,tabsize=1, basicstyle=\fontsize{7}{8}\selectfont\ttfamily}
 
 \begin{document}
@@ -12,15 +13,42 @@
        assignment Functional Programming
 }
 \date{\today}
-\author{Emilio Oldenziel \quad  Lotte Noteboom}
+\author{Emilio Oldenziel (s2509679)\\  Lotte Noteboom (s1959492)}
 
 \maketitle
 
-\section{Problem description}
+\section{Proof}
+In this section we will proof that $a^{q-1} \: mod \: p = 1 $ with $n=p*q$ is true for each $q$ for which
+$q-1$ is a multiple of $ord_{a}(p)$, thus 
+$q-1 = k * ord_{a}(p) \implies a^{q-1} \: mod \: p = 1$
+We will proof this with the reductio ad absurdum. Since $ord_{a}(p) = \operatorname*{min}_e a^{e} \: mod \: p =1$, we will change the right
+hand side of this equation by adding an extra value $r$ with $r < ord_{a}(p)$, this will give us the following expression:
+\[q-1 = x * ord_{a}(p) + r\]
+This will lead to the evaluation below.
 
+\[a^{q - 1} \equiv a^{x*ord_{a}(p) + r}\]
+\[a^{q - 1} \equiv (a^{ord_{a}(p)})^{x} * a^{r}\]
+\[a^{q - 1} \equiv 1 * a^{r} \equiv a^{r} \not\equiv 1\]
 
+Because the evaluation ends in a false conclusion, the first statement is true, no matter what we fill in for $r$ this
+this expression will never be true, thus $a^{q-1} \: mod \: p = 1 $ is true for each $q$ where $q$ is a multiple of
+$ord_{a}(p)$.
+
+\section{Excersises}
+\begin{tabular}{c|c}
+1a & isPrime\\
+1b & cntPrime\\
+1c & oddPspTO\\
+1d & expmod\\
+1e & oddPspTOI\\
+\\
+2a & order2\\
+2b & oddPspTOII\\
+2c & isPrime2\\
+2d & cntPrime2\\
+\end{tabular}
 \newpage
-\section{Appendix: program text}
+\section{Program text}
 \lstinputlisting{opdr1.hs}
 
 \end{document}
