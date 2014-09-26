@@ -1,0 +1,2 @@
+smallestMultiple :: Integer -> Integer
+smallestMultiple =
