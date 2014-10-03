@@ -1,26 +1,36 @@
 import Data.List
+import Data.Function
 
--- Write a Haskell function smallestMultiple n that returns the smallest number than can be divided
--- by each of the numbers from 1 to n without any remainder. For example,
--- smallestMultiple 10 should yield the answer 2520. Your solution must make use of the standard Haskell function foldr,
--- and should compute smallestMultiple 10000 within one second.
+-- Sieve of Eratosthenes, is a infinite list.
+primes :: [Integer]
+primes = 2:(sieve [ 3, 5..])
+  where
+  sieve (p:x) = p : sieve [ n | n <- x, n `mod` p > 0 ] 
+  
+ -- Computes a^e % n
+expmod :: Integer -> Integer -> Integer -> Integer
+expmod a e n 
+	| e == 1 = a `mod` n
+	| e `mod` 2 == 1 = (a * (expmod (a*a `mod` n) (e`div`2) n)) `mod` n
+	| e `mod` 2 == 0 = (expmod (a*a `mod` n) (e`div`2) n) `mod` n
 
---smallestMultiplier :: (a -> b -> b) -> b -> [a] -> [[a]]
-
-
-
+-- Calculates the smallest multiplier of the list 1 to n
 smallestMultiplier n =  foldr lcm 1 [2..n]
-
--- smallestMultiplier n =  foldr (*) 1 (foldr merge [] (map factor [2..n]))
 
 -- Gives the prime factorisation of a given number.
 factor :: Integer -> [Integer]
-factor a = fac a 2 
+factor n = fac n primes 
 	where 
-	fac a i
-		| a == i			= [i]
-		| a `mod` i == 0	= [i] ++ (fac (a`div`i) i)
-		| otherwise			= fac a (i+1)
+  	 fac n (p:primes)
+  	    | n == 1            = []
+		| n `mod` p == 0	= [p] ++ (fac (n `div` p) (p:primes))
+		| p*p > n           = [n]
+		| otherwise			= fac n primes
+		
+-- Gives at most 3 primes factors of a given number.
+factor3 :: Integer -> [Integer]
+factor3 n = take 3 (factor n)
+	
 
 -- Merges two ordered list to one ordered list
 merge :: [Integer] -> [Integer] -> [Integer]
@@ -36,28 +46,9 @@ merge2 :: [[Integer]] -> [Integer]
 merge2 [] = []
 merge2(x:xs) = merge x (merge2 xs)  
 
--- We call a positive integer n a palindromic number if reversing its digits yields the same number. For
--- example, 123321 is a palindromic number, while the number 123 is clearly not palindromic. Write a
--- Haskell function numberOfPalindromicComposites that takes as its input a positive integer
--- n, and produces as its output the number of palindromic numbers x which have the form
--- x=p*q<n, where p and q are prime numbers. For example, numberOfPalindromicComposites 100
--- should yield 7 (which is length [4,6,9,22,33,55,77].
--- The time to compute palindromicComposites (10^8) using ghci should not exceed two seconds.
-
+-- Checks if a number is a palindrome
 isPalindromicNumber :: Integer -> Bool
 isPalindromicNumber n = n == read(reverse(show n))
-
-palindromes :: [Integer]
-palindromes = genPalin []
-	where genPalin xs =
-		[(x:xs)| x<-[0..9]]
-		x:(reverse xs)
-	
--- Sieve of Eratosthenes, is a infinite list.
-primes :: [Integer]
-primes = 2:(sieve [ 3, 5..])
-  where
-  sieve (p:x) = p : sieve [ n | n <- x, n `mod` p > 0 ] 
   
 -- Helpfunction which gives the square of a integer.
 isqrt :: Integer -> Integer
@@ -66,5 +57,69 @@ isqrt = floor . sqrt . fromIntegral
 select :: Integer -> Integer -> [Integer] -> [Integer]
 select m n xs = takeWhile (<= n) (dropWhile (<m) xs) 
 
-numberOfPalindromicComposites n = length[x*y| x<-xs, y<-select x (n `div` x) primes, isPalindromicNumber(x*y)]
-	where xs = select 2 (isqrt n) primes 
+numberOfPalindromicComposites upb = length[x | x  <- (createPalins upb), length (factor3 x) == 2,  not(x==10) ]
+
+createPalins:: Integer -> [Integer]
+createPalins n = concat [(createPalinsN x) | x <- [1..n]]
+
+createPalinsN :: Integer -> [Integer]
+createPalinsN n  = [read(x)| x <- palindrome n ['0'..'9']]
+
+palindrome :: (Integral a) => a -> [Char] -> [String]
+palindrome n al =  concat  $  map (pal n) al
+	where 
+   pal :: (Integral a)=> a -> Char -> [String]
+   pal n x 
+		| n > 2 =  map (surround x) (palindrome (n-2) al)
+		| n > 1 = [[x,x]]
+		| otherwise = [[x]]
+		where 
+			surround :: Char -> String -> String
+			surround lt str = [lt] ++ str ++ [lt]
+
+mults :: Integer -> [Integer]
+mults n = [n, 2*n ..]
+
+multiples :: [Integer] ->[Integer]
+multiples xs = foldr merge [] (map mults xs)
+
+multSum :: Integer -> [Integer] -> Integer
+multSum n xs = sum (takeWhile (< n) (multiples xs))
+
+powers :: Integer -> [Integer]
+powers a = map (\x -> a^x) [2..]
+
+distinctPowers :: Integer -> Int -> Int
+distinctPowers m n = length( foldr merge [] (map (take (n - 1)) (map powers [2..m])))
+
+--Converts integer to list of the numbers in the integer
+digits :: Integer -> [Integer]
+digits 0 = []
+digits x = digits (x `div` 10) ++ [x `mod` 10]
+
+lastDigits :: Integer -> Integer-> [Integer]
+lastDigits m n  = (digits (sum[expmod x x (10^n) | x <- [1..m] ]))
+
+-- ex 6
+factorial :: Integer -> Integer
+factorial n = foldr (*) 1 [1..n]
+
+function :: Integer -> Integer
+function n = sum (map factorial (digits n))
+
+sFunction :: Integer -> Integer
+sFunction n = sum(digits(function n))
+
+gFunction :: Integer -> Integer
+gFunction i = head [x | x <- [1..], sFunction x == i]
+
+sGFunction :: Integer -> Integer
+sGFunction i = sum(digits(gFunction i))
+
+sumsg :: Integer -> Integer
+sumsg n = sum (map sGFunction [1..n])
+
+
+-- ex 7
+division :: Int -> Int -> Integer
+division m n = toInteger((fromIntegral 1) / (fromIntegral n))
