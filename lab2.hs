@@ -97,8 +97,11 @@ digits :: Integer -> [Integer]
 digits 0 = []
 digits x = digits (x `div` 10) ++ [x `mod` 10]
 
-lastDigits :: Integer -> Integer-> [Integer]
-lastDigits m n  = (digits (sum[expmod x x (10^n) | x <- [1..m] ]))
+takeLast :: Int -> [Integer] -> [Integer]
+takeLast n xs = reverse( take (n) (reverse xs))
+
+lastDigits :: Integer -> Int-> [Integer]
+lastDigits m n  = takeLast n (digits (sum[expmod x x (10^n) | x <- [1..m] ]))
 
 -- ex 6
 factorial :: Integer -> Integer
@@ -119,7 +122,12 @@ sGFunction i = sum(digits(gFunction i))
 sumsg :: Integer -> Integer
 sumsg n = sum (map sGFunction [1..n])
 
-
 -- ex 7
-division :: Int -> Int -> Integer
-division m n = toInteger((fromIntegral 1) / (fromIntegral n))
+
+--getComma :: []
+--getComma n = (0,:xs)
+
+division :: (Enum b, Fractional b) => b -> b -> [(b, b)]
+division m n = zip [m..n] [(1 / x)|x <- [m..n]]
+
+
