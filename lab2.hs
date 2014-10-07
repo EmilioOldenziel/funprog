@@ -124,10 +124,17 @@ sumsg n = sum (map sGFunction [1..n])
 
 -- ex 7
 
---getComma :: []
---getComma n = (0,:xs)
-
 division :: (Enum b, Fractional b) => b -> b -> [(b, b)]
 division m n = zip [m..n] [(1 / x)|x <- [m..n]]
 
+-- gives a list with the repetition using long division
+rep :: Integer -> Integer -> [Integer]
+rep p q = (longDiv p q [])
 
+-- gives a list with the repetition using long division
+longDiv :: Integer -> Integer -> [Integer] -> [Integer]
+longDiv p q xs
+	| sum[x == ((p - (p`mod`q))/p)| x <- xs] == 1 = xs
+	| p == 0 = xs
+	| longDiv ((p`mod`q)*10) q (xs ++ [((p - (p`mod`q))/p)])
+	| otherwise = xs
