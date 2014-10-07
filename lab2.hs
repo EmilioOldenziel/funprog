@@ -124,17 +124,22 @@ sumsg n = sum (map sGFunction [1..n])
 
 -- ex 7
 
-division :: (Enum b, Fractional b) => b -> b -> [(b, b)]
-division m n = zip [m..n] [(1 / x)|x <- [m..n]]
+
+--dropAfter:: [Integer] -> Integer -> [Integer]
+dropAt (x:xs) ys n
+		| x == n = ys
+		| otherwise = dropAt xs (x:ys) n
+
+division :: Integer -> Integer -> Integer
+division m n = snd (maximum (zip (map rep [m..n]) [m..n])) 
 
 -- gives a list with the repetition using long division
-rep :: Integer -> Integer -> [Integer]
-rep p q = (longDiv p q [])
+rep :: Integer -> Int
+rep q =  length (longDiv 1 q [])
 
 -- gives a list with the repetition using long division
 longDiv :: Integer -> Integer -> [Integer] -> [Integer]
 longDiv p q xs
-	| sum[x == ((p - (p`mod`q))/p)| x <- xs] == 1 = xs
-	| p == 0 = xs
-	| longDiv ((p`mod`q)*10) q (xs ++ [((p - (p`mod`q))/p)])
-	| otherwise = xs
+	| (p`mod`q) `elem` xs = dropAt xs [] (p `mod` q)
+	| p `mod` q == 0 = []
+	| otherwise = longDiv ((p`mod`q)*10) q ((p`mod`q) : xs)
