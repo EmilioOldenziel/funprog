@@ -2,6 +2,7 @@ import Data.List
 import Data.Function
 import Expression
 import Types
+import Valuations
 
 -- Part 01 Exercise 01: 
 -- Pretty print expressions
