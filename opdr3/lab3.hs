@@ -28,3 +28,20 @@ vars (p :*: q) = nub (vars p ++ vars q)
 vars (p :/: q) = nub (vars p ++ vars q)
 vars (p :%: q) = nub (vars p ++ vars q)
 
+-- Part 01 Exercise 04:
+-- Evaluating Exprs
+evalExpr :: Expr -> Valuation -> Integer
+evalExpr e xs = and (valid e xs)
+
+valid :: Expr -> Valuation -> [Bool]
+valid (Val x) = True
+valid (Var x) = va(x, xs)
+valid (p :+: q) = valid p && valid q
+valid (p :-: q) = valid p && valid q
+valid (p :*: q) = valid p && valid q
+valid (p :/: q) = valid p && valid q
+valid (p :%: q) = valid p && valid q
+ where va x xs
+	| [] == [(n, _):p | p<-xs, x == n] = False
+	| otherwise = True
+	
