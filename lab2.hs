@@ -1,22 +1,37 @@
 import Data.List
 import Data.Function
 
--- Sieve of Eratosthenes, is a infinite list.
-primes :: [Integer]
-primes = 2:(sieve [ 3, 5..])
-  where
-  sieve (p:x) = p : sieve [ n | n <- x, n `mod` p > 0 ] 
-  
+
+-- Helpfunctions in alphabetic order
+
+-- Creates palindromes
+createPalins:: Integer -> [Integer]
+createPalins n = concat [(createPalinsN x) | x <- [1..n]]
+
+-- Creates palindromes of a certain length n
+createPalinsN :: Integer -> [Integer]
+createPalinsN n  = [read(x)| x <- palindrome n ['0'..'9']]
+
+--Converts integer to list of the numbers in the integer
+digits :: Integer -> [Integer]
+digits 0 = []
+digits x = digits (x `div` 10) ++ [x `mod` 10]
+
+{-- Drops all elements of a list after the element that is is equal 
+	to n,
+ including that element itself --}
+dropAt :: Eq a => [a] -> [a] -> a -> [a]
+dropAt (x:xs) ys n
+		| x == n = ys
+		| otherwise = dropAt xs (x:ys) n
+
  -- Computes a^e % n
 expmod :: Integer -> Integer -> Integer -> Integer
 expmod a e n 
 	| e == 1 = a `mod` n
 	| e `mod` 2 == 1 = (a * (expmod (a*a `mod` n) (e`div`2) n)) `mod` n
 	| e `mod` 2 == 0 = (expmod (a*a `mod` n) (e`div`2) n) `mod` n
-
--- Calculates the smallest multiplier of the list 1 to n
-smallestMultiplier n =  foldr lcm 1 [2..n]
-
+	
 -- Gives the prime factorisation of a given number.
 factor :: Integer -> [Integer]
 factor n = fac n primes 
@@ -26,11 +41,29 @@ factor n = fac n primes
 		| n `mod` p == 0	= [p] ++ (fac (n `div` p) (p:primes))
 		| p*p > n           = [n]
 		| otherwise			= fac n primes
-		
+
 -- Gives at most 3 primes factors of a given number.
 factor3 :: Integer -> [Integer]
 factor3 n = take 3 (factor n)
-	
+
+-- Gives the factorial of n
+factorial :: Integer -> Integer
+factorial n = foldr (*) 1 [1..n]
+
+-- Checks if a number is a palindrome
+isPalindromicNumber :: Integer -> Bool
+isPalindromicNumber n = n == read(reverse(show n))
+
+-- Gives the square of a integer.
+isqrt :: Integer -> Integer
+isqrt = floor . sqrt . fromIntegral
+
+-- Gives a list with the repetition using long division
+longDiv :: Integral a => a -> a -> [a] -> [a]
+longDiv p q xs
+	| (p`mod`q) `elem` xs = dropAt xs [] (p `mod` q)
+	| p `mod` q == 0 = []
+	| otherwise = longDiv ((p`mod`q)*10) q ((p`mod`q) : xs)
 
 -- Merges two ordered list to one ordered list
 merge :: [Integer] -> [Integer] -> [Integer]
@@ -46,25 +79,16 @@ merge2 :: [[Integer]] -> [Integer]
 merge2 [] = []
 merge2(x:xs) = merge x (merge2 xs)  
 
--- Checks if a number is a palindrome
-isPalindromicNumber :: Integer -> Bool
-isPalindromicNumber n = n == read(reverse(show n))
-  
--- Helpfunction which gives the square of a integer.
-isqrt :: Integer -> Integer
-isqrt = floor . sqrt . fromIntegral
+-- Takes a finite list of integers and creates an
+-- infinite list of its multiples
+multiples :: [Integer] ->[Integer]
+multiples xs = foldr merge [] (map mults xs)
 
-select :: Integer -> Integer -> [Integer] -> [Integer]
-select m n xs = takeWhile (<= n) (dropWhile (<m) xs) 
+-- Creates an infinite list of multiples of n
+mults :: Integer -> [Integer]
+mults n = [n, 2*n ..]
 
-numberOfPalindromicComposites upb = length[x | x  <- (createPalins upb), length (factor3 x) == 2,  not(x==10) ]
-
-createPalins:: Integer -> [Integer]
-createPalins n = concat [(createPalinsN x) | x <- [1..n]]
-
-createPalinsN :: Integer -> [Integer]
-createPalinsN n  = [read(x)| x <- palindrome n ['0'..'9']]
-
+-- Creates palindromes of length n
 palindrome :: (Integral a) => a -> [Char] -> [String]
 palindrome n al =  concat  $  map (pal n) al
 	where 
@@ -77,36 +101,63 @@ palindrome n al =  concat  $  map (pal n) al
 			surround :: Char -> String -> String
 			surround lt str = [lt] ++ str ++ [lt]
 
-mults :: Integer -> [Integer]
-mults n = [n, 2*n ..]
-
-multiples :: [Integer] ->[Integer]
-multiples xs = foldr merge [] (map mults xs)
-
-multSum :: Integer -> [Integer] -> Integer
-multSum n xs = sum (takeWhile (< n) (multiples xs))
-
+-- Creates an infinite list of the powers of a
 powers :: Integer -> [Integer]
 powers a = map (\x -> a^x) [2..]
 
-distinctPowers :: Integer -> Int -> Int
-distinctPowers m n = length( foldr merge [] (map (take (n - 1)) (map powers [2..m])))
+-- Sieve of Eratosthenes, is a infinite list.
+primes :: [Integer]
+primes = 2:(sieve [ 3, 5..])
+  where
+  sieve (p:x) = p : sieve [ n | n <- x, n `mod` p > 0 ] 
+  
+{-- Gives a list with the repetition using long division
+ Note that the length is 1 element shorter because of
+ dropAt. For determining which list is the longest
+ when the length > 2, it makes no difference if the
+ length is minus one for each item.
+ --} 
+rep :: Integer -> Int
+rep q =  length (longDiv 1 q [])
 
---Converts integer to list of the numbers in the integer
-digits :: Integer -> [Integer]
-digits 0 = []
-digits x = digits (x `div` 10) ++ [x `mod` 10]
+-- Applies takeWhile and dropWhile to a list
+select :: Integer -> Integer -> [Integer] -> [Integer]
+select m n xs = takeWhile (<= n) (dropWhile (<m) xs) 
 
+-- Takes the last n elements of a list xs
 takeLast :: Int -> [Integer] -> [Integer]
 takeLast n xs = reverse( take (n) (reverse xs))
 
+-- Excercises
+
+--  Exercise 1: Calculates the smallest multiplier of the list 1 to n
+smallestMultiple :: Integer -> Integer
+smallestMultiple n =  foldr lcm 1 [2..n]
+
+{-- Exercise 2: sums up all integers of a list till the nth element of
+ the list --}
+multSum :: Integer -> [Integer] -> Integer
+multSum n xs = sum (takeWhile (< n) (multiples xs))
+
+{-- Exercise 3: produces the number of distinct terms in the sequence 
+ generated by a^b for 2 <= a <= m and 2 <= b <= n. 
+ --}
+distinctPowers :: Integer -> Int -> Int
+distinctPowers m n = length( foldr merge [] (map (take (n - 1)) (map powers [2..m])))
+
+{-- Exercise 4: Gives the number of palindromic composites under a 
+  upperbound. For example, when you want to compute till 10^8, enter 8 
+ --}
+numberOfPalindromicComposites :: Integer -> Int
+numberOfPalindromicComposites upb = length[x | x  <- (createPalins upb), length (factor3 x) == 2,  not(x==10) ]
+
+{-- Exercise 5: Gives the last n digits of the sum of all digits 
+  of the list 1^1, 2^2, .., m^m --}
 lastDigits :: Integer -> Int-> [Integer]
 lastDigits m n  = takeLast n (digits (sum[expmod x x (10^n) | x <- [1..m] ]))
 
--- ex 6
-factorial :: Integer -> Integer
-factorial n = foldr (*) 1 [1..n]
-
+-- Exercise 6:  All the functions described in ex. 6.
+-- Function 'f' is named 'function'
 function :: Integer -> Integer
 function n = sum (map factorial (digits n))
 
@@ -122,24 +173,11 @@ sGFunction i = sum(digits(gFunction i))
 sumsg :: Integer -> Integer
 sumsg n = sum (map sGFunction [1..n])
 
--- ex 7
-
-
---dropAfter:: [Integer] -> Integer -> [Integer]
-dropAt (x:xs) ys n
-		| x == n = ys
-		| otherwise = dropAt xs (x:ys) n
-
+{-- Exercise 7: Gives the number n for which 1/n has the longest
+ repetitive reciprocal of the list [m..n]--}
 division :: Integer -> Integer -> Integer
 division m n = snd (maximum (zip (map rep [m..n]) [m..n])) 
 
--- gives a list with the repetition using long division
-rep :: Integer -> Int
-rep q =  length (longDiv 1 q [])
 
--- gives a list with the repetition using long division
-longDiv :: Integer -> Integer -> [Integer] -> [Integer]
-longDiv p q xs
-	| (p`mod`q) `elem` xs = dropAt xs [] (p `mod` q)
-	| p `mod` q == 0 = []
-	| otherwise = longDiv ((p`mod`q)*10) q ((p`mod`q) : xs)
+
+
