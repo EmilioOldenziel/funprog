@@ -57,8 +57,15 @@ tokenize (x:xs)
 	| isAlpha x = (x:takeWhile isAlpha xs) : tokenize (dropWhile isAlpha xs)
 	| isDigit x = (x:takeWhile isDigit xs) : tokenize (dropWhile isDigit xs)
 	| otherwise = error "Syntax Error: invalid character in input"
+	
+expres :: [[Char]] -> String
+expres [] = []
+expres (x:xs)
+	| isDigit x = (read x::Integer): ) : toExpr xs
+	| isAlpha x = (read x::Char): ) : toExpr xs
+	| elem x "+/-%" = ( : (read x::thingie) : toExpr xs
 
 --toExpr :: String -> Expr
-toExpr [] = []
-toExpr (x:xs)
-	| 
+toExpr e = expres (tokenize e)
+
+
