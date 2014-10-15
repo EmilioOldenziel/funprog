@@ -61,9 +61,9 @@ tokenize (x:xs)
 expres :: [[Char]] -> String
 expres [] = []
 expres (x:xs)
-	| isDigit x = (read x::Integer): ) : toExpr xs
-	| isAlpha x = (read x::Char): ) : toExpr xs
-	| elem x "+/-%" = ( : (read x::thingie) : toExpr xs
+	| isDigit x = (read x::Integer): ) : expres xs
+	| isAlpha x = (read x::Char): ) : expres xs
+	| elem x "+/-%" = ( : (read x::thingie) : expres xs
 
 --toExpr :: String -> Expr
 toExpr e = expres (tokenize e)
