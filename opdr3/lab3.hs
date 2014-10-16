@@ -31,41 +31,46 @@ vars (p :%: q) = nub (vars p ++ vars q)
 
 -- Part 01 Exercise 04:
 -- Evaluating Exprs
-evalExpr :: Expr -> Valuation -> Integer
-evalExpr e xs = and (valid e xs)
+--evalExpr :: Expr -> Valuation -> Integer
+evalExpr e xs = read (show (hoi e xs))::Integer
 
-valid :: Expr -> Valuation -> [Bool]
-valid (Val x) = True
-valid (Var x) = va(x, xs)
-valid (p :+: q) = valid p && valid q
-valid (p :-: q) = valid p && valid q
-valid (p :*: q) = valid p && valid q
-valid (p :/: q) = valid p && valid q
-valid (p :%: q) = valid p && valid q
- where va x xs
-	| [] == [(n, _):p | p<-xs, x == n] = False
-	| otherwise = True
-	
+hoi (Var x) xs= head [snd n | n <- xs, (fst n) == x] 
+hoi (Val x) xs= x
+hoi (p :+: q) xs= (hoi p xs) + (hoi q xs)
+hoi (p :-: q) xs= (hoi p xs) - (hoi q xs)
+hoi (p :*: q) xs= (hoi p xs) * (hoi q xs)
+hoi (p :/: q) xs= div (hoi p xs) (hoi q xs)
+hoi (p :%: q) xs= mod (hoi p xs) (hoi q xs)
+
+{--valid :: Expr -> Valuation -> [Bool]
+valid (Var x) = head [snd n | n <- xs, (fst n) == x] 
+valid (Val x) = x
+valid (p :+: q) = valid p + valid q
+valid (p :-: q) = valid p - valid q
+valid (p :*: q) = valid p * valid q
+valid (p :/: q) = valid p `div` valid q
+valid (p :%: q) = valid p `mod` valid q--}
+
 -- Part 01 Exercise 05:
 -- Parsing expressions: String to Expr
 
 --tokenize :: [Char] -> [[Char]]
 tokenize [] = []
 tokenize (x:xs)
-	| elem x "*+/-%" = [x] : (tokenize xs)	
+	| elem x "*+/-%()" = [x] : (tokenize xs)	
 	| elem x " " = tokenize xs
 	| isAlpha x = (x:takeWhile isAlpha xs) : tokenize (dropWhile isAlpha xs)
 	| isDigit x = (x:takeWhile isDigit xs) : tokenize (dropWhile isDigit xs)
 	| otherwise = error "Syntax Error: invalid character in input"
 	
-expres :: [[Char]] -> String
+{--expres :: [[Char]] -> String
 expres [] = []
 expres (x:xs)
-	| isDigit x = (read x::Integer): ) : expres xs
-	| isAlpha x = (read x::Char): ) : expres xs
-	| elem x "+/-%" = ( : (read x::thingie) : expres xs
+	| isDigit x = (read x::Integer): ")" : expres xs
+	| isAlpha x = (read x::Char): ")" : expres xs
+	| elem x "+/-%" = "(" : (read x::thingie) : expres xs
 
 --toExpr :: String -> Expr
 toExpr e = expres (tokenize e)
 
-
+--}
