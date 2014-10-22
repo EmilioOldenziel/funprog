@@ -48,7 +48,7 @@ eval (p :%: q) xs= mod (eval p xs) (eval q xs)
 toExpr :: String -> Expr
 toExpr str = fst (parser str)
 
--- Part 01 Exercise 01:
+-- Part 02 Exercise 01:
 -- toComparison
 toComparison :: String -> Comparison
 toComparison (p < q) = Cmp LessThan p q
