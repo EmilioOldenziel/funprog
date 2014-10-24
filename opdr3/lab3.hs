@@ -67,3 +67,13 @@ checkOperator "=" = Equal
 checkOperator ">" = Greater
 checkOperator ">=" = GreaterEqual
 checkOperator "#" = NotEqual
+
+evalCmp :: Comparison -> Valuation -> Bool
+evalCmp deCmpInput xs 
+ |(Cmp LessThan eOne eTwo) xs 		= (evalExpr eOne xs) < 	(evalExpr eTwo xs)
+ |(Cmp LessEqual eOne eTwo) xs 		= (evalExpr eOne xs) <= (evalExpr eTwo xs)
+ |(Cmp Equal eOne eTwo) xs 			= (evalExpr eOne xs) == (evalExpr eTwo xs)
+ |(Cmp Greater eOne eTwo) xs 		= (evalExpr eOne xs) > 	(evalExpr eTwo xs)
+ |(Cmp GreaterEqual eOne eTwo) xs 	= (evalExpr eOne xs) >= (evalExpr eTwo xs)
+ |(Cmp NotEqual eOne eTwo) xs 		= (evalExpr eOne xs) /= (evalExpr eTwo xs)
+
