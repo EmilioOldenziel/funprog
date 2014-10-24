@@ -50,10 +50,29 @@ toExpr str = fst (parser str)
 
 -- Part 02 Exercise 01:
 -- toComparison
-toComparison :: String -> Comparison
-toComparison (p < q) = Cmp LessThan p q
-toComparison (p <= q) = Cmp LessEqual p q
-toComparison (p = q) = Cmp Equal p q
-toComparison (p > q) = Cmp GreaterThan p q
-toComparison (p >= q) = Cmp GreaterThan p q
-toComparison (p # q) = Cmp NotEqual p q
+
+--toComparison :: String -> Comparison
+--toComparison str = Cmp (checkOperator (eTwo (eOne str))) (toExpr(eOne str)) (toExpr(eTwo str))
+
+eOne str = takeWhile (\x -> (isInfixOf x "<=>#")) str
+
+eTwo str = reverse (takeWhile (\x -> (isInfixOf x "<=>#")) (reverse str))
+
+checkOperator "<" = "LessThan"
+checkOperator "<=" = "LessEqual"
+checkOperator "=" = "Equal"
+checkOperator ">" = "Greater"
+checkOperator ">=" = "GreaterEqual"
+checkOperator "#" = "NotEqual"
+{--
+com :: String -> [String]
+com [] = []
+com (x:xs)
+	| elem x "*+/-%()" = [x] : (com xs)	
+	| elem x " " = com xs
+	| isAlpha x = (x:takeWhile isAlpha xs) : com (dropWhile isAlpha xs)
+	| isDigit x = (x:takeWhile isDigit xs) : com (dropWhile isDigit xs)
+	| elem x ["<","=",">"," #" ] = (x:takeWhile (elem x ["<","=",">"," #" ]) ) : com (dropWhile isDigit xs)
+	| otherwise = error "Syntax Error: invalid character in input"
+
+--}
