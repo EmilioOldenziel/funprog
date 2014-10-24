@@ -18,6 +18,48 @@ data Expr =
 -- Part 01 Exercise 06:
 -- Wrap it all up
 
+instance Show Expr where
+	show (Var x) = x
+	show (Val x) = show x
+	show (p :+: q) = par(show p ++ " + " ++ show q)
+	show (p :-: q) = par(show p ++ " - " ++ show q)
+	show (p :*: q) = par(show p ++ " * " ++ show q)
+	show (p :/: q) = par(show p ++ " / " ++ show q)
+	show (p :%: q) = par(show p ++ " % " ++ show q)
+
+-- Part 01 Exercise 01: 
+-- Pretty print expressions
+par :: String -> String
+par s = "(" ++ s ++ ")"
+
+
+
+-- Part 01 Exercise 02:
+-- Sorted list of variables
+vars (Var x) = [x]
+vars (Val x) = [show x]
+vars (p :+: q) = nub (vars p ++ vars q)
+vars (p :-: q) = nub (vars p ++ vars q)
+vars (p :*: q) = nub (vars p ++ vars q)
+vars (p :/: q) = nub (vars p ++ vars q)
+vars (p :%: q) = nub (vars p ++ vars q)
+
+-- Part 01 Exercise 04:
+-- Evaluating Exprs
+evalExpr :: Expr -> Valuation -> Integer
+evalExpr e xs = read (show (eval e xs))::Integer
+eval (Var x) xs= head [snd n | n <- xs, (fst n) == x] 
+eval (Val x) xs= x
+eval (p :+: q) xs= (eval p xs) + (eval q xs)
+eval (p :-: q) xs= (eval p xs) - (eval q xs)
+eval (p :*: q) xs= (eval p xs) * (eval q xs)
+eval (p :/: q) xs= div (eval p xs) (eval q xs)
+eval (p :%: q) xs= mod (eval p xs) (eval q xs)
+
+-- Part 01 Exercise 05:
+-- Parsing expressions: String to Expr
+toExpr :: String -> Expr
+toExpr str = fst (parser str)
 parseF :: [String] -> (Expr,[String])
 parseF [] = error "Parse error...abort"
 parseF (tok:tokens)
